@@ -16,13 +16,14 @@
 package com.github.thibaultbee.streampack.internal.sources
 
 import android.Manifest
-import android.media.AudioRecord
-import android.media.AudioTimestamp
-import android.media.MediaFormat
-import android.media.MediaRecorder
+import android.content.Context
+import android.media.*
 import android.media.audiofx.AcousticEchoCanceler
 import android.media.audiofx.NoiseSuppressor
+import android.media.projection.MediaProjection
+import android.media.projection.MediaProjectionManager
 import android.os.Build
+import androidx.activity.result.ActivityResult
 import androidx.annotation.RequiresPermission
 import com.github.thibaultbee.streampack.data.AudioConfig
 import com.github.thibaultbee.streampack.internal.data.Frame
@@ -30,8 +31,13 @@ import com.github.thibaultbee.streampack.internal.utils.TimeUtils
 import com.github.thibaultbee.streampack.logger.ILogger
 import java.nio.ByteBuffer
 
-class AudioCapture(val logger: ILogger) : IFrameCapture<AudioConfig> {
+class AudioCapture(context: Context, val logger: ILogger) : IFrameCapture<AudioConfig> {
+    var activityResult: ActivityResult? = null
+
+    private var mediaProjection: MediaProjection? = null
     private var audioRecord: AudioRecord? = null
+    private val mediaProjectionManager =
+        context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     override fun configure(config: AudioConfig) {
@@ -45,25 +51,59 @@ class AudioCapture(val logger: ILogger) : IFrameCapture<AudioConfig> {
             throw IllegalArgumentException(audioRecordErrorToString(bufferSize))
         }
 
-        audioRecord = AudioRecord(
-            MediaRecorder.AudioSource.DEFAULT, config.sampleRate,
-            config.channelConfig, config.byteFormat, bufferSize
-        ).also {
-            if (config.enableEchoCanceler) {
-                if (AcousticEchoCanceler.isAvailable()) {
-                    AcousticEchoCanceler.create(it.audioSessionId).enabled = true
-                } else {
-                    logger.e(this, "Acoustic echo canceler is not available")
-                }
+        mediaProjection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            activityResult?.let {
+                mediaProjectionManager.getMediaProjection(it.resultCode, it.data!!)
             }
-            if (config.enableNoiseSuppressor) {
-                if (NoiseSuppressor.isAvailable()) {
-                    NoiseSuppressor.create(it.audioSessionId).enabled = true
-                } else {
-                    logger.e(this, "Noise suppressor is not available")
-                }
-            }
+        } else {
+            null
         }
+
+        audioRecord = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val audioFormat = AudioFormat.Builder()
+                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                .setSampleRate(config.sampleRate)
+                .setChannelMask(config.channelConfig)
+                .setEncoding(config.byteFormat)
+                .build()
+
+            AudioRecord.Builder()
+                .setAudioFormat(audioFormat)
+                .setBufferSizeInBytes(bufferSize)
+                .apply {
+                    mediaProjection?.let {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            setAudioPlaybackCaptureConfig(
+                                AudioPlaybackCaptureConfiguration.Builder(it)
+                                    .addMatchingUsage(AudioAttributes.USAGE_MEDIA)
+                                    .build()
+                            )
+                        }
+                    } ?: setAudioSource(MediaRecorder.AudioSource.DEFAULT)
+                }
+                .build()
+        } else {
+            AudioRecord(
+                MediaRecorder.AudioSource.DEFAULT, config.sampleRate,
+                config.channelConfig, config.byteFormat, bufferSize
+            )
+        }
+            .also {
+                if (config.enableEchoCanceler) {
+                    if (AcousticEchoCanceler.isAvailable()) {
+                        AcousticEchoCanceler.create(it.audioSessionId).enabled = true
+                    } else {
+                        logger.e(this, "Acoustic echo canceler is not available")
+                    }
+                }
+                if (config.enableNoiseSuppressor) {
+                    if (NoiseSuppressor.isAvailable()) {
+                        NoiseSuppressor.create(it.audioSessionId).enabled = true
+                    } else {
+                        logger.e(this, "Noise suppressor is not available")
+                    }
+                }
+            }
 
         if (audioRecord?.state != AudioRecord.STATE_INITIALIZED) {
             throw IllegalArgumentException("Failed to initialized AudioRecord")

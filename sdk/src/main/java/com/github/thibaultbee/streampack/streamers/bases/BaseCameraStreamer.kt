@@ -54,7 +54,7 @@ open class BaseCameraStreamer(
     context = context,
     tsServiceInfo = tsServiceInfo,
     videoCapture = CameraCapture(context, logger = logger),
-    audioCapture = if (enableAudio) AudioCapture(logger) else null,
+    audioCapture = if (enableAudio) AudioCapture(context, logger) else null,
     endpoint = endpoint,
     logger = logger
 ), ICameraStreamer {

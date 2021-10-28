@@ -47,7 +47,7 @@ open class BaseScreenRecorderStreamer(
     context = context,
     tsServiceInfo = tsServiceInfo,
     videoCapture = ScreenCapture(context, logger = logger),
-    audioCapture = if (enableAudio) AudioCapture(logger) else null,
+    audioCapture = if (enableAudio) AudioCapture(context, logger) else null,
     endpoint = endpoint,
     logger = logger
 ) {
@@ -85,6 +85,7 @@ open class BaseScreenRecorderStreamer(
          * @param value activity result returns from [ComponentActivity.registerForActivityResult] callback.
          */
         set(value) {
+            (audioCapture as AudioCapture).activityResult = value
             screenCapture.activityResult = value
         }
 
