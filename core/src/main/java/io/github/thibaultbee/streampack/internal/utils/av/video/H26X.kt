@@ -35,3 +35,9 @@ fun ByteBuffer.removeStartCode(): ByteBuffer {
     return this.slice()
 }
 
+enum class ChromaFormat(val value: Int) {
+    YUV400(0),
+    YUV420(1),
+    YUV422(2),
+    YUV444(3)
+}

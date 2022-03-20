@@ -15,6 +15,7 @@
  */
 package io.github.thibaultbee.streampack.internal.muxers.flv.packet
 
+import io.github.thibaultbee.streampack.internal.utils.av.video.ChromaFormat
 import io.github.thibaultbee.streampack.internal.utils.av.video.getStartCodeSize
 import io.github.thibaultbee.streampack.internal.utils.av.video.removeStartCode
 import io.github.thibaultbee.streampack.internal.utils.put
@@ -45,7 +46,7 @@ class AVCDecoderConfigurationRecord(sps: ByteBuffer, pps: ByteBuffer) {
         if ((profileIdc == 100) || (profileIdc == 110) || (profileIdc == 122) || (profileIdc == 144)) {
             buffer.put(
                 (0b111111 shl 2) // reserved
-                        or (ColorFormat.YUV420.value) // chroma_format: always YUV420 on Android
+                        or (ChromaFormat.YUV420.value) // chroma_format: always YUV420 on Android
             )
             buffer.put(
                 (0b11111 shl 3) // reserved
@@ -72,12 +73,5 @@ class AVCDecoderConfigurationRecord(sps: ByteBuffer, pps: ByteBuffer) {
             }
             return size
         }
-    }
-
-    enum class ColorFormat(val value: Int) {
-        YUV400(0),
-        YUV420(1),
-        YUV422(2),
-        YUV444(3)
     }
 }
