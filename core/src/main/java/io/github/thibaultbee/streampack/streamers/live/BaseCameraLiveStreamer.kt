@@ -15,7 +15,9 @@
  */
 package io.github.thibaultbee.streampack.streamers.live
 
+import android.Manifest
 import android.content.Context
+import androidx.annotation.RequiresPermission
 import io.github.thibaultbee.streampack.internal.endpoints.ILiveEndpoint
 import io.github.thibaultbee.streampack.internal.muxers.IMuxer
 import io.github.thibaultbee.streampack.listeners.OnConnectionListener
@@ -92,6 +94,7 @@ open class BaseCameraLiveStreamer(
      * @param url server url (syntax: rtmp://server/streamKey or srt://ip:port)
      * @throws Exception if connection has failed or configuration has failed or [startStream] has failed too.
      */
+    @RequiresPermission(Manifest.permission.CAMERA)
     override suspend fun startStream(url: String) {
         connect(url)
         startStream()

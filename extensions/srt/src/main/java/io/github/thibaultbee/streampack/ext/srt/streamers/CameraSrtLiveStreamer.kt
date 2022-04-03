@@ -15,7 +15,9 @@
  */
 package io.github.thibaultbee.streampack.ext.srt.streamers
 
+import android.Manifest
 import android.content.Context
+import androidx.annotation.RequiresPermission
 import io.github.thibaultbee.streampack.data.BitrateRegulatorConfig
 import io.github.thibaultbee.streampack.ext.srt.internal.endpoints.SrtProducer
 import io.github.thibaultbee.streampack.ext.srt.regulator.srt.SrtBitrateRegulator
@@ -135,6 +137,7 @@ class CameraSrtLiveStreamer(
     /**
      * Same as [BaseCameraLiveStreamer.startStream] but also starts bitrate regulator.
      */
+    @RequiresPermission(Manifest.permission.CAMERA)
     override fun startStream() {
         if (bitrateRegulator != null) {
             scheduler.start()
@@ -145,6 +148,7 @@ class CameraSrtLiveStreamer(
     /**
      * Same as [BaseCameraLiveStreamer.startStream] but also starts bitrate regulator.
      */
+    @RequiresPermission(Manifest.permission.CAMERA)
     override suspend fun startStream(url: String) {
         if (bitrateRegulator != null) {
             scheduler.start()
@@ -161,6 +165,7 @@ class CameraSrtLiveStreamer(
      * @param port server port
      * @throws Exception if connection has failed or configuration has failed or [startStream] has failed too.
      */
+    @RequiresPermission(Manifest.permission.CAMERA)
     override suspend fun startStream(ip: String, port: Int) {
         connect(ip, port)
         startStream()

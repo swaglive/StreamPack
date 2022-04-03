@@ -108,7 +108,7 @@ open class BaseCameraStreamer(
             try {
                 cameraCapture.previewSurface = previewSurface
                 cameraCapture.encoderSurface = videoEncoder?.inputSurface
-                cameraCapture.startPreview(cameraId)
+                cameraCapture.startCapture(cameraId)
             } catch (e: Exception) {
                 stopPreview()
                 throw StreamPackError(e)
@@ -124,7 +124,30 @@ open class BaseCameraStreamer(
      */
     override fun stopPreview() {
         stopStreamImpl()
-        cameraCapture.stopPreview()
+        cameraCapture.stopCapture()
+    }
+
+    @RequiresPermission(Manifest.permission.CAMERA)
+    override fun startStream() {
+        require(videoConfig != null) { "Video has not been configured!" }
+        runBlocking {
+            /**
+             * call startCapture if capture is not already running: no preview mode
+             */
+            val mustStartCapture = !cameraCapture.isCapturing
+            try {
+                if (mustStartCapture) {
+                    cameraCapture.encoderSurface = videoEncoder?.inputSurface
+                    cameraCapture.startCapture(startStream = true)
+                }
+                super.startStream()
+            } catch (e: Exception) {
+                if (mustStartCapture) {
+                    cameraCapture.stopCapture()
+                }
+                throw StreamPackError(e)
+            }
+        }
     }
 
     /**

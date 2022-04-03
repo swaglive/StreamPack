@@ -42,9 +42,11 @@ class CameraCapture(
                 throw UnsupportedOperationException("Camera $value does not support $fps fps")
             }
             runBlocking {
-                val restartStream = isStreaming
-                stopPreview()
-                startPreview(value, restartStream)
+                if (isCapturing) {
+                    val restartStream = isStreaming
+                    stopCapture()
+                    startCapture(value, restartStream)
+                }
             }
             field = value
         }
@@ -59,31 +61,41 @@ class CameraCapture(
 
     private var fps: Int = 30
     private var isStreaming = false
-    internal var isPreviewing = false
+    internal var isCapturing = false
 
     override fun configure(config: VideoConfig) {
         this.fps = config.fps
     }
 
     @RequiresPermission(Manifest.permission.CAMERA)
-    suspend fun startPreview(cameraId: String = this.cameraId, restartStream: Boolean = false) {
+    suspend fun startCapture(cameraId: String = this.cameraId, startStream: Boolean = false) {
+        isCapturing = true
         var targets = mutableListOf<Surface>()
         previewSurface?.let { targets.add(it) }
         encoderSurface?.let { targets.add(it) }
-        cameraController.startCamera(cameraId, targets)
+        try {
+            cameraController.startCamera(cameraId, targets)
+        } catch (e: Exception) {
+            isCapturing = false
+            throw e
+        }
 
         targets = mutableListOf()
         previewSurface?.let { targets.add(it) }
-        if (restartStream) {
+        if (startStream) {
             encoderSurface?.let { targets.add(it) }
         }
-        cameraController.startRequestSession(fps, targets)
-        isPreviewing = true
+        try {
+            cameraController.startRequestSession(fps, targets)
+        } catch (e: Exception) {
+            isCapturing = false
+            throw e
+        }
     }
 
-    fun stopPreview() {
-        isPreviewing = false
+    fun stopCapture() {
         cameraController.stopCamera()
+        isCapturing = false
     }
 
     private fun checkStream() =
@@ -103,8 +115,13 @@ class CameraCapture(
 
             cameraController.unmuteVibrationAndSound()
 
+            if (previewSurface != null) {
+                cameraController.removeTarget(encoderSurface!!)
+            } else {
+                stopCapture()
+            }
+
             isStreaming = false
-            cameraController.removeTarget(encoderSurface!!)
         }
     }
 

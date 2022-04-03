@@ -150,8 +150,8 @@ abstract class StreamerTestCase {
                 AndroidUtils.fakeValidVideoConfig()
             )
             streamer.startStream()
-            fail("startStream without startPreview must failed")
         } catch (e: Exception) {
+            fail("Must be possible to configure/startStream but catches exception: $e")
         }
     }
 

@@ -34,7 +34,6 @@ import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 import io.github.thibaultbee.streampack.listeners.OnErrorListener
 import io.github.thibaultbee.streampack.utils.isFrameRateSupported
 import kotlinx.coroutines.launch
-import java.io.File
 
 class PreviewViewModel(private val streamerManager: StreamerManager) : ObservableViewModel() {
     companion object {
@@ -112,6 +111,10 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
         viewModelScope.launch {
             try {
                 streamerManager.startStream()
+                /**
+                 * Force reload of camera settings if startPreview has not been called yet.
+                 */
+                notifyCameraChange()
             } catch (e: Throwable) {
                 Log.e(TAG, "startStream failed", e)
                 streamerError.postValue("startStream: ${e.message ?: "Unknown error"}")
@@ -123,6 +126,10 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
         viewModelScope.launch {
             try {
                 streamerManager.stopStream()
+                /**
+                 * Force reload of camera settings if startPreview has not been called yet.
+                 */
+                notifyCameraChange()
             } catch (e: Throwable) {
                 Log.e(TAG, "stopStream failed", e)
             }

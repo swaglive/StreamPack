@@ -74,6 +74,18 @@ abstract class CameraStreamerTestCase :
                 AndroidUtils.fakeValidVideoConfig()
             )
             streamer.startPreview(surface)
+        } catch (e: Exception) {
+            fail("Default usage must not throw exception $e")
+        }
+    }
+
+    @Test
+    fun noPreviewDefaultUsageTest() {
+        try {
+            streamer.configure(
+                AndroidUtils.fakeValidAudioConfig(),
+                AndroidUtils.fakeValidVideoConfig()
+            )
             streamer.startStream()
             streamer.stopStream()
             streamer.release()
@@ -157,7 +169,6 @@ abstract class CameraStreamerTestCase :
         }
     }
 
-
     @Test
     override fun startStreamReleaseTest() {
         try {
@@ -188,6 +199,21 @@ abstract class CameraStreamerTestCase :
             fail("Must be possible to startStream/stopPreview but catches exception: $e")
         }
     }
+
+    @Test
+    fun noPreviewStartStreamStopPreviewTest() {
+        try {
+            streamer.configure(
+                AndroidUtils.fakeValidAudioConfig(),
+                AndroidUtils.fakeValidVideoConfig()
+            )
+            streamer.startStream()
+            streamer.stopPreview()
+        } catch (e: Exception) {
+            fail("Must be possible to startStream/stopPreview but catches exception: $e")
+        }
+    }
+
 
     @Test
     override fun startStreamStopStreamTest() {

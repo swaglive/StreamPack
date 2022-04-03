@@ -166,7 +166,7 @@ class CameraController(
         cameraId: String,
         targets: List<Surface>
     ) {
-        require(targets.isNotEmpty()) { " At least one target is required" }
+        require(targets.isNotEmpty()) { "At least one target is required" }
 
         withContext(coroutineDispatcher) {
             val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -183,7 +183,7 @@ class CameraController(
     fun startRequestSession(fps: Int, targets: List<Surface>) {
         require(camera != null) { "Camera must not be null" }
         require(captureSession != null) { "Capture session must not be null" }
-        require(targets.isNotEmpty()) { " At least one target is required" }
+        require(targets.isNotEmpty()) { "At least one target is required" }
 
         captureRequest =
             createRequestSession(
@@ -206,7 +206,7 @@ class CameraController(
 
     fun addTargets(targets: List<Surface>) {
         require(captureRequest != null) { "capture request must not be null" }
-        require(targets.isNotEmpty()) { " At least one target is required" }
+        require(targets.isNotEmpty()) { "At least one target is required" }
 
         targets.forEach {
             captureRequest!!.addTarget(it)

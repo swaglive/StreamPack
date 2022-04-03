@@ -104,7 +104,7 @@ class StreamerManager(
         streamer = StreamerFactory(context, configuration).build()
     }
 
-    @RequiresPermission(allOf = [Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA])
+    @RequiresPermission(Manifest.permission.CAMERA)
     fun startPreview(previewSurface: Surface) {
         getCameraStreamer()?.startPreview(previewSurface)
     }

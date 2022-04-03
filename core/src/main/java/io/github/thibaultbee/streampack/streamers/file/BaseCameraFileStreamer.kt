@@ -102,6 +102,6 @@ open class BaseCameraFileStreamer(
      * Same as [BaseCameraStreamer.startStream] with RequiresPermission annotation for
      * Manifest.permission.WRITE_EXTERNAL_STORAGE.
      */
-    @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
+    @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA])
     override fun startStream() = super.startStream()
 }
