@@ -16,6 +16,7 @@
 package io.github.thibaultbee.streampack.data
 
 import android.content.Context
+import android.media.MediaCodecInfo
 import android.media.MediaCodecInfo.CodecProfileLevel
 import android.media.MediaFormat
 import android.os.Build
@@ -78,6 +79,18 @@ class VideoConfig(
             Size(resolution.height, resolution.width)
         } else {
             Size(resolution.width, resolution.height)
+        }
+    }
+
+    override fun toMediaFormat(): MediaFormat {
+        return super.toMediaFormat().apply {
+            setInteger(MediaFormat.KEY_WIDTH, resolution.width)
+            setInteger(MediaFormat.KEY_HEIGHT, resolution.height)
+            setInteger(MediaFormat.KEY_FRAME_RATE, fps)
+            setInteger(MediaFormat.KEY_PROFILE, profile)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setInteger(MediaFormat.KEY_LEVEL, level)
+            }
         }
     }
 

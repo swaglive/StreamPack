@@ -57,9 +57,10 @@ class FlvMuxer(
     }
 
     override fun addStreams(streamsConfig: List<Config>): Map<Config, Int> {
+        requireStreams()
+
         val streamMap = mutableMapOf<Config, Int>()
         streams.addAll(streamsConfig)
-        requireStreams()
         streams.forEachIndexed { index, config -> streamMap[config] = index }
         return streamMap
     }

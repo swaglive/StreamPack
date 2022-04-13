@@ -20,7 +20,7 @@ import java.nio.ByteBuffer
 import kotlin.random.Random
 
 object FakeFrames {
-    fun createFakeKeyFrame(mimeType: String) = Frame(
+    fun createKeyFrame(mimeType: String) = Frame(
         ByteBuffer.wrap(Random.nextBytes(1024)),
         mimeType,
         Random.nextLong(),
@@ -28,7 +28,7 @@ object FakeFrames {
         extra = listOf(ByteBuffer.wrap(Random.nextBytes(10)))
     )
 
-    fun createFakeFrame(mimeType: String) = Frame(
+    fun createFrame(mimeType: String) = Frame(
         ByteBuffer.wrap(Random.nextBytes(1024)),
         mimeType,
         Random.nextLong(),

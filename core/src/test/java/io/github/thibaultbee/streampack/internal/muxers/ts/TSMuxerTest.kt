@@ -149,7 +149,7 @@ class TSMuxerTest {
     fun `encode without streams test`() {
         val tsMux = TSMuxer(MockMuxerListener(), createFakeServiceInfo())
         try {
-            tsMux.encode(FakeFrames.createFakeKeyFrame(MediaFormat.MIMETYPE_VIDEO_AVC), -1)
+            tsMux.encode(FakeFrames.createKeyFrame(MediaFormat.MIMETYPE_VIDEO_AVC), -1)
             fail()
         } catch (e: Exception) {
         }
@@ -180,11 +180,11 @@ class TSMuxerTest {
             tsMux.addStreams(createFakeServiceInfo(), listOf(config))[config]!!
 
         tsMux.encode(
-            FakeFrames.createFakeKeyFrame(MediaFormat.MIMETYPE_VIDEO_AVC), streamPid
+            FakeFrames.createKeyFrame(MediaFormat.MIMETYPE_VIDEO_AVC), streamPid
         )
 
         tsMux.encode(
-            FakeFrames.createFakeFrame(MediaFormat.MIMETYPE_VIDEO_AVC), streamPid
+            FakeFrames.createFrame(MediaFormat.MIMETYPE_VIDEO_AVC), streamPid
         )
     }
 
@@ -196,10 +196,10 @@ class TSMuxerTest {
             tsMux.addStreams(createFakeServiceInfo(), listOf(config))[config]!!
 
         tsMux.encode(
-            FakeFrames.createFakeKeyFrame(MediaFormat.MIMETYPE_AUDIO_AAC), streamPid
+            FakeFrames.createKeyFrame(MediaFormat.MIMETYPE_AUDIO_AAC), streamPid
         )
         tsMux.encode(
-            FakeFrames.createFakeFrame(MediaFormat.MIMETYPE_AUDIO_AAC), streamPid
+            FakeFrames.createFrame(MediaFormat.MIMETYPE_AUDIO_AAC), streamPid
         )
     }
 }

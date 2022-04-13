@@ -37,4 +37,11 @@ open class Config(
      * Audio encoder bitrate in bits/s.
      */
     val startBitrate: Int
-)
+) {
+    open fun toMediaFormat(): MediaFormat {
+        return MediaFormat().apply {
+            setString(MediaFormat.KEY_MIME, mimeType)
+            setInteger(MediaFormat.KEY_BIT_RATE, startBitrate)
+        }
+    }
+}
