@@ -1,5 +1,5 @@
-apply from: "${project.rootDir}/common_library.gradle"
-apply from: "${project.rootDir}/publish.gradle"
+apply from: "${project.rootDir}/StreamPack/common_library.gradle"
+//apply from: "${project.rootDir}/publish.gradle"
 
 ext {
     artifactName = 'streampack-extension-srt'
@@ -7,7 +7,7 @@ ext {
 }
 
 dependencies {
-    implementation project(':core')
+    implementation project(':StreamPack:core')
     implementation 'io.github.thibaultbee:srtdroid:1.4.0'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
