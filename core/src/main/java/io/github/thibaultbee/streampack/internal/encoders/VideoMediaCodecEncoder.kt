@@ -134,17 +134,17 @@ class VideoMediaCodecEncoder(
                  * When surface is called twice without the stopStream(). When configure() is
                  * called twice for example,
                  */
-                executor.submit {
-                    if (eglSurface != null) {
-                        detachSurfaceTexture()
-                    }
-                    synchronized(this) {
-                        value?.let {
-                            initOrUpdateSurfaceTexture(it)
-                        }
-                    }
-
-                }.get() // Wait till executor returns
+//                executor.submit {
+//                    if (eglSurface != null) {
+//                        detachSurfaceTexture()
+//                    }
+//                    synchronized(this) {
+//                        value?.let {
+//                            initOrUpdateSurfaceTexture(it)
+//                        }
+//                    }
+//
+//                }.get() // Wait till executor returns
                 field = value
             }
 

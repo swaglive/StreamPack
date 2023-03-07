@@ -159,7 +159,7 @@ abstract class BaseStreamer(
     } else {
         null
     }
-    protected var videoEncoder = if (videoCapture != null) {
+    var videoEncoder = if (videoCapture != null) {
         VideoMediaCodecEncoder(
             videoEncoderListener,
             onInternalErrorListener,

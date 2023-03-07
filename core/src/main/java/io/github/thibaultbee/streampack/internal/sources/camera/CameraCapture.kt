@@ -34,7 +34,7 @@ class CameraCapture(
 ) : IVideoCapture {
     var previewSurface: Surface? = null
     override var encoderSurface: Surface? = null
-    var cameraId: String = "0"
+    var cameraId: String = "1"
         get() = cameraController.cameraId ?: field
         @RequiresPermission(Manifest.permission.CAMERA)
         set(value) {
@@ -93,21 +93,21 @@ class CameraCapture(
         require(encoderSurface != null) { "encoder surface must not be null" }
 
     override fun startStream() {
-        checkStream()
+//        checkStream()
 
         cameraController.muteVibrationAndSound()
-        cameraController.addTarget(encoderSurface!!)
+//        cameraController.addTarget(encoderSurface!!)
         isStreaming = true
     }
 
     override fun stopStream() {
         if (isStreaming) {
-            checkStream()
+//            checkStream()
 
             cameraController.unmuteVibrationAndSound()
 
             isStreaming = false
-            cameraController.removeTarget(encoderSurface!!)
+//            cameraController.removeTarget(encoderSurface!!)
         }
     }
 
