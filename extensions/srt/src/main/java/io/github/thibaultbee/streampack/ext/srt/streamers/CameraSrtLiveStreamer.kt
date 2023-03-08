@@ -82,6 +82,7 @@ class CameraSrtLiveStreamer(
     private val scheduler = Scheduler(500) {
         bitrateRegulator?.update(srtProducer.stats, settings.video.bitrate, settings.audio.bitrate)
             ?: throw UnsupportedOperationException("Scheduler runs but no bitrate regulator set")
+        onConnectionListener?.onNewBitrate(settings.video.bitrate as Long)
     }
 
     private val srtProducer = endpoint as SrtProducer

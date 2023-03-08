@@ -120,6 +120,7 @@ class SrtProducer(
     override fun disconnect() {
         socket.close()
         socket = Socket()
+        onConnectionListener?.onDisconnect()
     }
 
     override fun write(packet: Packet) {
