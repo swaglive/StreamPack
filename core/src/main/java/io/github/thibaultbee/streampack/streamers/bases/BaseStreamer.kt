@@ -113,12 +113,12 @@ abstract class BaseStreamer(
         override fun onOutputFrame(frame: Frame) {
             videoTsStreamId?.let {
                 try {
-                    frame.pts += videoCapture!!.timestampOffset
-                    frame.dts = if (frame.dts != null) {
-                        frame.dts!! + videoCapture.timestampOffset
-                    } else {
-                        null
-                    }
+//                    frame.pts += videoCapture!!.timestampOffset
+//                    frame.dts = if (frame.dts != null) {
+//                        frame.dts!! + videoCapture.timestampOffset
+//                    } else {
+//                        null
+//                    }
                     this@BaseStreamer.muxer.encode(frame, it)
                 } catch (e: Exception) {
                     // Send exception to encoder
