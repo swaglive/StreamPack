@@ -30,7 +30,7 @@ import java.nio.ByteBuffer
 
 class CameraCapture(
     private val context: Context,
-    logger: ILogger
+    val logger: ILogger,
 ) : IVideoCapture {
     var previewSurface: Surface? = null
     override var encoderSurface: Surface? = null
@@ -56,6 +56,7 @@ class CameraCapture(
 
     override val timestampOffset = CameraHelper.getTimeOffsetToMonoClock(context, cameraId)
     override val hasSurface = true
+    override val useCustomRecorder = true
     override fun getFrame(buffer: ByteBuffer): Frame {
         throw UnsupportedOperationException("Camera expects to run in Surface mode")
     }
@@ -93,21 +94,24 @@ class CameraCapture(
         require(encoderSurface != null) { "encoder surface must not be null" }
 
     override fun startStream() {
-//        checkStream()
+        if (!useCustomRecorder) {
+            checkStream()
+            cameraController.addTarget(encoderSurface!!)
+        }
 
         cameraController.muteVibrationAndSound()
-//        cameraController.addTarget(encoderSurface!!)
         isStreaming = true
     }
 
     override fun stopStream() {
         if (isStreaming) {
-//            checkStream()
+            if (!useCustomRecorder) {
+                checkStream()
+                cameraController.removeTarget(encoderSurface!!)
+            }
 
             cameraController.unmuteVibrationAndSound()
-
             isStreaming = false
-//            cameraController.removeTarget(encoderSurface!!)
         }
     }
 

@@ -45,11 +45,12 @@ class VideoMediaCodecEncoder(
     private val context: Context,
     private val useSurfaceMode: Boolean,
     private val manageVideoOrientation: Boolean,
-    logger: ILogger
+    logger: ILogger,
+    useCustomRecorder: Boolean,
 ) :
     MediaCodecEncoder<VideoConfig>(encoderListener, logger) {
     var codecSurface = if (useSurfaceMode) {
-        CodecSurface(context, manageVideoOrientation)
+        CodecSurface(context, manageVideoOrientation, useCustomRecorder)
     } else {
         null
     }
@@ -116,7 +117,11 @@ class VideoMediaCodecEncoder(
     val inputSurface: Surface?
         get() = codecSurface?.inputSurface
 
-    class CodecSurface(private val context: Context, private val manageVideoOrientation: Boolean) :
+    class CodecSurface(
+        private val context: Context,
+        private val manageVideoOrientation: Boolean,
+        private val useCustomRecorder: Boolean,
+    ) :
         SurfaceTexture.OnFrameAvailableListener {
         private var eglSurface: EGlSurface? = null
         private var fullFrameRect: FullFrameRect? = null
@@ -134,17 +139,19 @@ class VideoMediaCodecEncoder(
                  * When surface is called twice without the stopStream(). When configure() is
                  * called twice for example,
                  */
-//                executor.submit {
-//                    if (eglSurface != null) {
-//                        detachSurfaceTexture()
-//                    }
-//                    synchronized(this) {
-//                        value?.let {
-//                            initOrUpdateSurfaceTexture(it)
-//                        }
-//                    }
-//
-//                }.get() // Wait till executor returns
+                if (!useCustomRecorder) {
+                    executor.submit {
+                        if (eglSurface != null) {
+                            detachSurfaceTexture()
+                        }
+                        synchronized(this) {
+                            value?.let {
+                                initOrUpdateSurfaceTexture(it)
+                            }
+                        }
+
+                    }.get() // Wait till executor returns
+                }
                 field = value
             }
 

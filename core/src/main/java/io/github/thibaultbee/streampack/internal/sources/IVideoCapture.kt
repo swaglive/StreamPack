@@ -24,4 +24,10 @@ interface IVideoCapture : IFrameCapture<VideoConfig>, ISurfaceCapture {
      * buffer producer (see [IFrameCapture]).
      */
     val hasSurface: Boolean
+
+    /**
+     * Custom encoder lets us using encoded data from filter,
+     * instead of surface data from camera.
+     * */
+    val useCustomRecorder: Boolean
 }

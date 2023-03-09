@@ -166,7 +166,8 @@ abstract class BaseStreamer(
             context,
             videoCapture.hasSurface,
             manageVideoOrientation,
-            logger
+            logger,
+            videoCapture.useCustomRecorder,
         )
     } else {
         null
