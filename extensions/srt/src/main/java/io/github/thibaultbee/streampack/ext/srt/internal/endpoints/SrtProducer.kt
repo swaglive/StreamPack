@@ -145,6 +145,13 @@ class SrtProducer(
             }
 
         try {
+            if (msgCtrl.boundary != Boundary.SOLO && packet.ts <= socket.connectionTime) {
+                /**
+                 * prevent meet `Wrong source time was provided. Sending is rejected.` exception
+                 * while sending socket packet
+                 * */
+                return
+            }
             socket.send(packet.buffer, msgCtrl)
         } catch (e: Exception) {
             isOnError = true
