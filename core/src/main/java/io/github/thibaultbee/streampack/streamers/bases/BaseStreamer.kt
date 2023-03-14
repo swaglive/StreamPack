@@ -79,6 +79,9 @@ abstract class BaseStreamer(
     protected var videoConfig: VideoConfig? = null
     private var audioConfig: AudioConfig? = null
 
+    var droppedAudioFrames: Long = 0
+    var droppedVideoFrames: Long = 0
+
     // Only handle stream error (error on muxer, endpoint,...)
     /**
      * Internal usage only
@@ -99,6 +102,7 @@ abstract class BaseStreamer(
                 try {
                     this@BaseStreamer.muxer.encode(frame, it)
                 } catch (e: Exception) {
+                    droppedAudioFrames++
                     throw StreamPackError(e)
                 }
             }
@@ -121,6 +125,7 @@ abstract class BaseStreamer(
 //                    }
                     this@BaseStreamer.muxer.encode(frame, it)
                 } catch (e: Exception) {
+                    droppedVideoFrames++
                     // Send exception to encoder
                     throw StreamPackError(e)
                 }
@@ -344,6 +349,7 @@ abstract class BaseStreamer(
      * @see [stopStream]
      */
     private fun resetAudio() {
+        droppedAudioFrames = 0
         audioEncoder?.release()
 
         // Reconfigure
@@ -358,6 +364,7 @@ abstract class BaseStreamer(
      * @see [stopStream]
      */
     private fun resetVideo() {
+        droppedVideoFrames = 0
         videoEncoder?.release()
 
         // And restart...
