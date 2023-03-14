@@ -17,6 +17,7 @@ package io.github.thibaultbee.streampack.internal.sources.camera
 
 import android.Manifest
 import android.content.Context
+import android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT
 import android.view.Surface
 import androidx.annotation.RequiresPermission
 import io.github.thibaultbee.streampack.data.VideoConfig
@@ -34,7 +35,7 @@ class CameraCapture(
 ) : IVideoCapture {
     var previewSurface: Surface? = null
     override var encoderSurface: Surface? = null
-    var cameraId: String = "1"
+    var cameraId: String = "$CAMERA_FACING_FRONT"
         get() = cameraController.cameraId ?: field
         @RequiresPermission(Manifest.permission.CAMERA)
         set(value) {
