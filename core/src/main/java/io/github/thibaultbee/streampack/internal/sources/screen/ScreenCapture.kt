@@ -39,6 +39,7 @@ class ScreenCapture(
     override var encoderSurface: Surface? = null
     override val timestampOffset = 0L
     override val hasSurface = true
+    override val useCustomRecorder = true
     override fun getFrame(buffer: ByteBuffer): Frame {
         throw UnsupportedOperationException("Screen source expects to run in Surface mode")
     }

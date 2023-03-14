@@ -17,6 +17,7 @@ package io.github.thibaultbee.streampack.internal.sources.camera
 
 import android.Manifest
 import android.content.Context
+import android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT
 import android.view.Surface
 import androidx.annotation.RequiresPermission
 import io.github.thibaultbee.streampack.data.VideoConfig
@@ -30,11 +31,11 @@ import java.nio.ByteBuffer
 
 class CameraCapture(
     private val context: Context,
-    logger: ILogger
+    val logger: ILogger,
 ) : IVideoCapture {
     var previewSurface: Surface? = null
     override var encoderSurface: Surface? = null
-    var cameraId: String = "0"
+    var cameraId: String = "$CAMERA_FACING_FRONT"
         get() = cameraController.cameraId ?: field
         @RequiresPermission(Manifest.permission.CAMERA)
         set(value) {
@@ -56,6 +57,7 @@ class CameraCapture(
 
     override val timestampOffset = CameraHelper.getTimeOffsetToMonoClock(context, cameraId)
     override val hasSurface = true
+    override val useCustomRecorder = true
     override fun getFrame(buffer: ByteBuffer): Frame {
         throw UnsupportedOperationException("Camera expects to run in Surface mode")
     }
@@ -93,21 +95,24 @@ class CameraCapture(
         require(encoderSurface != null) { "encoder surface must not be null" }
 
     override fun startStream() {
-        checkStream()
+        if (!useCustomRecorder) {
+            checkStream()
+            cameraController.addTarget(encoderSurface!!)
+        }
 
         cameraController.muteVibrationAndSound()
-        cameraController.addTarget(encoderSurface!!)
         isStreaming = true
     }
 
     override fun stopStream() {
         if (isStreaming) {
-            checkStream()
+            if (!useCustomRecorder) {
+                checkStream()
+                cameraController.removeTarget(encoderSurface!!)
+            }
 
             cameraController.unmuteVibrationAndSound()
-
             isStreaming = false
-            cameraController.removeTarget(encoderSurface!!)
         }
     }
 

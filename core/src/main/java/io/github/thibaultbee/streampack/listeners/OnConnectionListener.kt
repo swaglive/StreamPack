@@ -38,4 +38,14 @@ interface OnConnectionListener {
      * Called when a connection just succeeded.
      */
     fun onSuccess()
+
+    /**
+     * Called when disconnecting the connection.
+     */
+    fun onDisconnect()
+
+    /**
+     * Called when updating the bitrate
+     */
+    fun onNewBitrate(bitrate: Long)
 }
