@@ -15,13 +15,25 @@
  */
 package io.github.thibaultbee.streampack.internal.endpoints
 
+import io.github.thibaultbee.streampack.internal.utils.BitrateManager
 import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 
-interface ILiveEndpoint : IEndpoint {
+abstract class ILiveEndpoint : IEndpoint {
     /**
      * Listener to manage connection.
      */
-    var onConnectionListener: OnConnectionListener?
+    var onConnectionListener: OnConnectionListener? = null
+        set(value) {
+            field = value
+            value?.let {
+                bitrateManager.connectionListener = it
+            }
+        }
+
+    /**
+     * Bitrate callback
+     */
+    var bitrateManager: BitrateManager = BitrateManager()
 
     /**
      * Connect to a server.
@@ -30,12 +42,12 @@ interface ILiveEndpoint : IEndpoint {
      * @param url server url
      * @throws Exception if connection has failed or configuration has failed
      */
-    suspend fun connect(url: String)
+    open suspend fun connect(url: String) {}
 
     /**
      * Disconnect from the remote server.
      *
      * @throws Exception is not connected
      */
-    fun disconnect()
+    open fun disconnect() {}
 }
