@@ -39,8 +39,7 @@ import java.net.URI
 class SrtProducer(
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
     val logger: ILogger
-) : ILiveEndpoint {
-    override var onConnectionListener: OnConnectionListener? = null
+) : ILiveEndpoint() {
 
     private var socket = Socket()
     private var bitrate = 0L
@@ -146,6 +145,7 @@ class SrtProducer(
 
         try {
             socket.send(packet.buffer, msgCtrl)
+            bitrateManager.calculateBitrate((packet.buffer.capacity()*8).toLong())
         } catch (e: Exception) {
             isOnError = true
             throw e
