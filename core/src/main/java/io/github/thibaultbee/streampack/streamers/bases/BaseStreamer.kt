@@ -58,7 +58,7 @@ import java.nio.ByteBuffer
 abstract class BaseStreamer(
     private val context: Context,
     protected val logger: ILogger = StreamPackLogger(),
-    protected val audioCapture: IAudioCapture?,
+    val audioCapture: IAudioCapture?,
     protected val videoCapture: IVideoCapture?,
     manageVideoOrientation: Boolean,
     private val muxer: IMuxer,

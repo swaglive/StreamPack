@@ -1,0 +1,20 @@
+apply from: "${project.rootDir}/StreamPack/common_library.gradle"
+
+ext {
+    artifactName = 'streampack-config'
+    artifactDescription = 'Configuration for StreamPack.'
+}
+
+android {
+    namespace 'com.example.config'
+}
+
+dependencies {
+
+    implementation rootProject.ext.sharedlibrary.corektx
+    implementation rootProject.ext.sharedlibrary.xappcompat
+    implementation rootProject.ext.sharedlibrary.material
+    implementation project(':StreamPack:core')
+    implementation project(':StreamPack:extension-srt')
+    implementation project(':StreamPack:extension-rtmp')
+}
