@@ -76,15 +76,6 @@ class StreamerManager(
         return getStreamer<ILiveStreamer>()
     }
 
-    val requiredPermissions: List<String>
-        get() {
-            val permissions = mutableListOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
-            )
-            return permissions
-        }
-
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     fun rebuildStreamer() {
         streamer = StreamerFactory(context, configuration).build()
