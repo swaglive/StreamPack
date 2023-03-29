@@ -121,10 +121,13 @@ class StreamerManager(
 
     fun toggleCamera() {
         getCameraStreamer()?.let {
-            if (context.isBackCamera(it.camera)) {
-                it.camera = context.getFrontCameraList()[0]
+            var cameraList: List<String> = if (context.isBackCamera(it.camera)) {
+                context.getFrontCameraList()
             } else {
-                it.camera = context.getBackCameraList()[0]
+                context.getBackCameraList()
+            }
+            if (cameraList.isNotEmpty()) {
+                it.camera = cameraList[0]
             }
         }
     }
