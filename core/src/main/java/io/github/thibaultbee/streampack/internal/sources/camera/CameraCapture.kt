@@ -35,7 +35,7 @@ class CameraCapture(
 ) : IVideoCapture {
     var previewSurface: Surface? = null
     override var encoderSurface: Surface? = null
-    var cameraId: String = "${CameraMetadata.LENS_FACING_FRONT}"
+    var cameraId: String = "${CameraMetadata.LENS_FACING_BACK}"
         get() = cameraController.cameraId ?: field
         @RequiresPermission(Manifest.permission.CAMERA)
         set(value) {
