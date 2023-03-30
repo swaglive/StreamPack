@@ -268,7 +268,7 @@ class ScreenRecorderService : Service() {
 
             streamer.onErrorListener = object : OnErrorListener {
                 override fun onError(error: StreamPackError) {
-                    Log.e(tag, "An error occurred", error)
+                    Timber.tag(TAG).e("An error occurred", error)
                     notify(
                         "An error occurred",
                         error.localizedMessage ?: "Unknown error"
@@ -279,19 +279,19 @@ class ScreenRecorderService : Service() {
 
             streamer.onConnectionListener = object : OnConnectionListener {
                 override fun onLost(message: String) {
-                    Log.e(tag, "Connection lost: $message")
+                    Timber.tag(TAG).e("Connection lost: $message")
                     notify("Connection", message)
                     stopSelf()
                 }
 
                 override fun onFailed(message: String) {
-                    Log.e(tag, "Connection failed: $message")
+                    Timber.tag(TAG).e("Connection failed: $message")
                     notify("Connection failed", message)
                     stopSelf()
                 }
 
                 override fun onSuccess() {
-                    Log.i(tag, "Connection succeeded")
+                    Timber.tag(TAG).d("Connection succeeded")
                     notify("Connection succeeded", "")
                 }
             }
@@ -326,7 +326,7 @@ class ScreenRecorderService : Service() {
                 throw e
             }
         } catch (e: Exception) {
-            Log.e(tag, "An error occurred", e)
+            Timber.tag(TAG).e("An error occurred", e)
             notify("An error occurred", e.localizedMessage ?: "Unknown error")
             stopSelf()
         }

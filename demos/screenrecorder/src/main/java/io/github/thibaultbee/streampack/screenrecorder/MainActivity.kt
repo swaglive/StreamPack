@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity() {
             if (it.itemId == R.id.action_settings) {
                 goToSettingsActivity()
             } else {
-                Log.e(tag, "Unknown menu item ${it.itemId}")
+                Timber.tag(TAG).e("Unknown menu item ${it.itemId}")
             }
             true
         }
