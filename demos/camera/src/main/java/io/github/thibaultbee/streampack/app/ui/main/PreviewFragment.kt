@@ -205,11 +205,10 @@ class PreviewFragment : Fragment() {
                     requireContext().getCameraCharacteristics(it),
                     SurfaceHolder::class.java
                 )
-                Log.d(
-                    TAG,
+                Timber.tag(TAG).d(
                     "View finder size: ${binding.preview.width} x ${binding.preview.height}"
                 )
-                Log.d(TAG, "Selected preview size: $previewSize")
+                Timber.tag(TAG).d("Selected preview size: $previewSize")
                 binding.preview.setAspectRatio(previewSize.width, previewSize.height)
 
                 // To ensure that size is set, initialize camera in the view's thread

@@ -51,7 +51,7 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
 
     private val onErrorListener = object : OnErrorListener {
         override fun onError(error: StreamPackError) {
-            Log.e(TAG, "onError", error)
+            Timber.tag(TAG).e("onError", error)
             streamerError.postValue("${error.javaClass.simpleName}: ${error.message}")
         }
     }
@@ -66,7 +66,7 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
         }
 
         override fun onSuccess() {
-            Log.i(TAG, "Connection succeeded")
+            Timber.tag(TAG).d("Connection succeeded")
         }
     }
 
@@ -77,9 +77,9 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
                 streamerManager.rebuildStreamer()
                 streamerManager.onErrorListener = onErrorListener
                 streamerManager.onConnectionListener = onConnectionListener
-                Log.d(TAG, "Streamer is created")
+                Timber.tag(TAG).d("Streamer is created")
             } catch (e: Throwable) {
-                Log.e(TAG, "createStreamer failed", e)
+                Timber.tag(TAG).e("createStreamer failed", e)
                 streamerError.postValue("createStreamer: ${e.message ?: "Unknown error"}")
             }
         }
@@ -92,7 +92,7 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
                 streamerManager.startPreview(previewSurface)
                 notifyCameraChange()
             } catch (e: Throwable) {
-                Log.e(TAG, "startPreview failed", e)
+                Timber.tag(TAG).e("startPreview failed", e)
                 streamerError.postValue("startPreview: ${e.message ?: "Unknown error"}")
             }
         }
@@ -103,7 +103,7 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
             try {
                 streamerManager.stopPreview()
             } catch (e: Throwable) {
-                Log.e(TAG, "stopPreview failed", e)
+                Timber.tag(TAG).e("stopPreview failed", e)
             }
         }
     }
@@ -113,7 +113,7 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
             try {
                 streamerManager.startStream()
             } catch (e: Throwable) {
-                Log.e(TAG, "startStream failed", e)
+                Timber.tag(TAG).e("startStream failed", e)
                 streamerError.postValue("startStream: ${e.message ?: "Unknown error"}")
             }
         }
@@ -124,7 +124,7 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
             try {
                 streamerManager.stopStream()
             } catch (e: Throwable) {
-                Log.e(TAG, "stopStream failed", e)
+                Timber.tag(TAG).e("stopStream failed", e)
             }
         }
     }
@@ -144,7 +144,7 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
             streamerManager.toggleCamera()
             notifyCameraChange()
         } catch (e: Exception) {
-            Log.e(TAG, "toggleCamera failed", e)
+            Timber.tag(TAG).e("toggleCamera failed", e)
             streamerError.postValue("toggleCamera: ${e.message ?: "Unknown error"}")
         }
     }
@@ -284,7 +284,7 @@ class PreviewViewModel(private val streamerManager: StreamerManager) : Observabl
         try {
             streamerManager.release()
         } catch (e: Exception) {
-            Log.e(TAG, "streamer.release failed", e)
+            Timber.tag(TAG).e("streamer.release failed", e)
         }
     }
 }
