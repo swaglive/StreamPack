@@ -16,6 +16,7 @@
 package io.github.thibaultbee.streampack.logger
 
 import android.util.Log
+import timber.log.Timber
 
 /**
  * Implementation of [ILogger]. Use as default logger in StreamPack.
@@ -23,22 +24,22 @@ import android.util.Log
  */
 class StreamPackLogger: ILogger {
     override fun e(obj: Any, message: String, tr: Throwable?) {
-        Log.e(obj.javaClass.simpleName, message, tr)
+        Timber.e(obj.javaClass.simpleName, message, tr)
     }
 
     override fun w(obj: Any, message: String, tr: Throwable?) {
-        Log.w(obj.javaClass.simpleName, message, tr)
+        Timber.w(obj.javaClass.simpleName, message, tr)
     }
 
     override fun i(obj: Any, message: String, tr: Throwable?) {
-        Log.i(obj.javaClass.simpleName, message, tr)
+        Timber.i(obj.javaClass.simpleName, message, tr)
     }
 
     override fun v(obj: Any, message: String, tr: Throwable?) {
-        Log.v(obj.javaClass.simpleName, message, tr)
+        Timber.v(obj.javaClass.simpleName, message, tr)
     }
 
     override fun d(obj: Any, message: String, tr: Throwable?) {
-        Log.d(obj.javaClass.simpleName, message, tr)
+        Timber.d(obj.javaClass.simpleName, message, tr)
     }
 }
