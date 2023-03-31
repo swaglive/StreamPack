@@ -16,6 +16,7 @@
 package io.github.thibaultbee.streampack.internal.endpoints
 
 import io.github.thibaultbee.streampack.internal.utils.BitrateManager
+import io.github.thibaultbee.streampack.internal.utils.FpsListener
 import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 
 abstract class ILiveEndpoint : IEndpoint {
@@ -23,17 +24,6 @@ abstract class ILiveEndpoint : IEndpoint {
      * Listener to manage connection.
      */
     var onConnectionListener: OnConnectionListener? = null
-        set(value) {
-            field = value
-            value?.let {
-                bitrateManager.connectionListener = it
-            }
-        }
-
-    /**
-     * Bitrate callback
-     */
-    var bitrateManager: BitrateManager = BitrateManager()
 
     /**
      * Connect to a server.

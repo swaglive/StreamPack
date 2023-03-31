@@ -48,4 +48,9 @@ interface OnConnectionListener {
      * Called when updating the bitrate
      */
     fun onNewBitrate(bitrate: Long)
+
+    /**
+     * Called when updating the fps
+     */
+    fun onFps(fps: Int)
 }

@@ -27,7 +27,6 @@ import io.github.thibaultbee.srtdroid.models.Stats
 import io.github.thibaultbee.streampack.internal.data.Packet
 import io.github.thibaultbee.streampack.internal.data.SrtPacket
 import io.github.thibaultbee.streampack.internal.endpoints.ILiveEndpoint
-import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 import io.github.thibaultbee.streampack.logger.ILogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -145,7 +144,6 @@ class SrtProducer(
 
         try {
             socket.send(packet.buffer, msgCtrl)
-            bitrateManager.calculateBitrate((packet.buffer.capacity()*8).toLong())
         } catch (e: Exception) {
             isOnError = true
             throw e

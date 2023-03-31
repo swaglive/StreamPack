@@ -18,6 +18,8 @@ package io.github.thibaultbee.streampack.streamers.live
 import android.content.Context
 import io.github.thibaultbee.streampack.internal.endpoints.ILiveEndpoint
 import io.github.thibaultbee.streampack.internal.muxers.IMuxer
+import io.github.thibaultbee.streampack.internal.utils.BitrateManager
+import io.github.thibaultbee.streampack.internal.utils.FpsListener
 import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 import io.github.thibaultbee.streampack.listeners.OnErrorListener
 import io.github.thibaultbee.streampack.logger.ILogger
@@ -60,8 +62,14 @@ open class BaseCameraLiveStreamer(
      */
     override var onConnectionListener: OnConnectionListener? = initialOnConnectionListener
         set(value) {
-            liveProducer.onConnectionListener = value
             field = value
+            liveProducer.onConnectionListener = value
+            bitrateManager.onConnectionListener = value
+            fpsListener.setCallback(object: FpsListener.Callback {
+                override fun onFps(fps: Int) {
+                    value?.onFps(fps)
+                }
+            })
         }
 
     /**

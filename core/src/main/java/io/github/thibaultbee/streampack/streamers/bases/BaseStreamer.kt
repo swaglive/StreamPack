@@ -33,6 +33,8 @@ import io.github.thibaultbee.streampack.internal.muxers.IMuxer
 import io.github.thibaultbee.streampack.internal.muxers.IMuxerListener
 import io.github.thibaultbee.streampack.internal.sources.IAudioCapture
 import io.github.thibaultbee.streampack.internal.sources.IVideoCapture
+import io.github.thibaultbee.streampack.internal.utils.BitrateManager
+import io.github.thibaultbee.streampack.internal.utils.FpsListener
 import io.github.thibaultbee.streampack.listeners.OnErrorListener
 import io.github.thibaultbee.streampack.logger.ILogger
 import io.github.thibaultbee.streampack.logger.StreamPackLogger
@@ -81,6 +83,16 @@ abstract class BaseStreamer(
 
     var droppedAudioFrames: Long = 0
     var droppedVideoFrames: Long = 0
+
+    /**
+     * Bitrate callback
+     */
+    var bitrateManager: BitrateManager = BitrateManager()
+
+    /**
+     * FPS callback
+     */
+    var fpsListener: FpsListener = FpsListener()
 
     // Only handle stream error (error on muxer, endpoint,...)
     /**
@@ -137,6 +149,9 @@ abstract class BaseStreamer(
         override fun onOutputFrame(packet: Packet) {
             try {
                 endpoint.write(packet)
+                // kb/s
+                bitrateManager.calculateBitrate((packet.buffer.capacity()*8).toLong()/1000)
+                fpsListener.calculateFps()
             } catch (e: Exception) {
                 // Send exception to encoder
                 throw StreamPackError(e)

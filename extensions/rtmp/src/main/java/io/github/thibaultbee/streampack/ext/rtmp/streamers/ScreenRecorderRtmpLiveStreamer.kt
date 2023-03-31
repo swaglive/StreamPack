@@ -15,10 +15,8 @@
  */
 package io.github.thibaultbee.streampack.ext.rtmp.streamers
 
-import android.Manifest
 import android.app.Service
 import android.content.Context
-import androidx.annotation.RequiresPermission
 import io.github.thibaultbee.streampack.ext.rtmp.internal.endpoints.RtmpProducer
 import io.github.thibaultbee.streampack.internal.muxers.flv.FlvMuxer
 import io.github.thibaultbee.streampack.listeners.OnConnectionListener
