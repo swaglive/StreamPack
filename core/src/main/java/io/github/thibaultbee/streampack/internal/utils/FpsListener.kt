@@ -4,7 +4,7 @@ package io.github.thibaultbee.streampack.internal.utils
  * Created by pedro on 09/07/19.
  */
 class FpsListener {
-  private var fpsCont = 0
+  private var fpsCount = 0
   private var ts = System.currentTimeMillis()
   private var callback: Callback? = null
 
@@ -17,10 +17,10 @@ class FpsListener {
   }
 
   fun calculateFps() {
-    fpsCont++
+    fpsCount++
     if (System.currentTimeMillis() - ts >= 1000) {
-      if (callback != null) callback!!.onFps(fpsCont)
-      fpsCont = 0
+      if (callback != null) callback?.onFps(fpsCount)
+      fpsCount = 0
       ts = System.currentTimeMillis()
     }
   }

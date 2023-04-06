@@ -15,12 +15,11 @@
  */
 package io.github.thibaultbee.streampack.logger
 
-import android.util.Log
 import timber.log.Timber
 
 /**
  * Implementation of [ILogger]. Use as default logger in StreamPack.
- * It calls Android [Log].
+ * It calls Android [Timber].
  */
 class StreamPackLogger: ILogger {
     override fun e(obj: Any, message: String, tr: Throwable?) {

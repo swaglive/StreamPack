@@ -15,8 +15,6 @@
  */
 package io.github.thibaultbee.streampack.internal.endpoints
 
-import io.github.thibaultbee.streampack.internal.utils.BitrateManager
-import io.github.thibaultbee.streampack.internal.utils.FpsListener
 import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 
 abstract class ILiveEndpoint : IEndpoint {
