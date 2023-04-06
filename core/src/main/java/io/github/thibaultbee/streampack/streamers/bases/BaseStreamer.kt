@@ -136,6 +136,7 @@ abstract class BaseStreamer(
 //                        null
 //                    }
                     this@BaseStreamer.muxer.encode(frame, it)
+                    fpsListener.calculateFps()
                 } catch (e: Exception) {
                     droppedVideoFrames++
                     // Send exception to encoder
@@ -149,9 +150,7 @@ abstract class BaseStreamer(
         override fun onOutputFrame(packet: Packet) {
             try {
                 endpoint.write(packet)
-                // kb/s
-                bitrateManager.calculateBitrate((packet.buffer.capacity()*8).toLong()/1000)
-                fpsListener.calculateFps()
+                bitrateManager.calculateBitrate((packet.buffer.capacity()*8).toLong())
             } catch (e: Exception) {
                 // Send exception to encoder
                 throw StreamPackError(e)
