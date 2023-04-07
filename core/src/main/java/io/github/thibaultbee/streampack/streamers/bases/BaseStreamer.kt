@@ -87,12 +87,12 @@ abstract class BaseStreamer(
     /**
      * Bitrate callback
      */
-    var bitrateManager: BitrateManager = BitrateManager()
+    val bitrateManager: BitrateManager = BitrateManager()
 
     /**
      * FPS callback
      */
-    var fpsListener: FpsListener = FpsListener()
+    val fpsListener: FpsListener = FpsListener()
 
     // Only handle stream error (error on muxer, endpoint,...)
     /**
