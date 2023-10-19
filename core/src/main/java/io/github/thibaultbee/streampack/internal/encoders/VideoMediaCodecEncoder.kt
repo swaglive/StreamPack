@@ -37,7 +37,7 @@ import java.util.concurrent.Executors
  *
  * @param useSurfaceMode to get video frames, if [Boolean.true],the encoder will use Surface mode, else Buffer mode with [IEncoderListener.onInputFrame].
  */
-class VideoMediaCodecEncoder(
+open class VideoMediaCodecEncoder(
     encoderListener: IEncoderListener,
     override val onInternalErrorListener: OnErrorListener,
     private val context: Context,
@@ -94,7 +94,7 @@ class VideoMediaCodecEncoder(
         super.stopStream()
     }
 
-    val inputSurface: Surface?
+    open val inputSurface: Surface?
         get() = codecSurface?.inputSurface
 
     class CodecSurface(private val context: Context, private val manageVideoOrientation: Boolean) :

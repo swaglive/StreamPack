@@ -28,6 +28,7 @@ import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 import io.github.thibaultbee.streampack.listeners.OnErrorListener
 import io.github.thibaultbee.streampack.regulator.IBitrateRegulatorFactory
 import io.github.thibaultbee.streampack.streamers.bases.BaseCameraStreamer
+import io.github.thibaultbee.streampack.streamers.interfaces.IStreamerEncoderCallback
 import io.github.thibaultbee.streampack.streamers.live.BaseCameraLiveStreamer
 
 /**
@@ -44,6 +45,7 @@ import io.github.thibaultbee.streampack.streamers.live.BaseCameraLiveStreamer
  */
 class CameraSrtLiveStreamer(
     context: Context,
+    encoderCallback: IStreamerEncoderCallback?,
     enableAudio: Boolean = true,
     tsServiceInfo: TsServiceInfo = context.defaultTsServiceInfo,
     bitrateRegulatorFactory: IBitrateRegulatorFactory? = null,
@@ -52,6 +54,7 @@ class CameraSrtLiveStreamer(
     initialOnConnectionListener: OnConnectionListener? = null
 ) : BaseCameraLiveStreamer(
     context = context,
+    encoderCallback = encoderCallback,
     enableAudio = enableAudio,
     muxer = TSMuxer().apply { addService(tsServiceInfo) },
     endpoint = SrtProducer(),

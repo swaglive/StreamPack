@@ -38,6 +38,7 @@ import io.github.thibaultbee.streampack.logger.Logger
 import io.github.thibaultbee.streampack.streamers.helpers.IConfigurationHelper
 import io.github.thibaultbee.streampack.streamers.helpers.StreamerConfigurationHelper
 import io.github.thibaultbee.streampack.streamers.interfaces.IStreamer
+import io.github.thibaultbee.streampack.streamers.interfaces.IStreamerEncoderCallback
 import io.github.thibaultbee.streampack.streamers.settings.BaseStreamerSettings
 import io.github.thibaultbee.streampack.utils.TAG
 import java.nio.ByteBuffer
@@ -56,6 +57,8 @@ import java.nio.ByteBuffer
  */
 abstract class BaseStreamer(
     private val context: Context,
+    // 讓開發者可以建立自己的VideoEncoder
+    encoderCallback: IStreamerEncoderCallback?,
     protected val audioCapture: IAudioCapture?,
     protected val videoCapture: IVideoCapture?,
     manageVideoOrientation: Boolean,
@@ -153,12 +156,22 @@ abstract class BaseStreamer(
     }
 
     protected var audioEncoder = if (audioCapture != null) {
-        AudioMediaCodecEncoder(audioEncoderListener, onInternalErrorListener)
+        encoderCallback?.onAudioEncoderCreate(audioEncoderListener, onInternalErrorListener)
+            ?: AudioMediaCodecEncoder(
+                audioEncoderListener,
+                onInternalErrorListener
+            )
     } else {
         null
     }
     protected var videoEncoder = if (videoCapture != null) {
-        VideoMediaCodecEncoder(
+        encoderCallback?.onVideoEncoderCreate(
+            videoEncoderListener,
+            onInternalErrorListener,
+            context,
+            videoCapture.hasSurface,
+            manageVideoOrientation
+        ) ?: VideoMediaCodecEncoder(
             videoEncoderListener,
             onInternalErrorListener,
             context,

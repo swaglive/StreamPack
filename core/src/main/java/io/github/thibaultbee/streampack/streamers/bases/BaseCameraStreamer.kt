@@ -29,6 +29,7 @@ import io.github.thibaultbee.streampack.internal.sources.camera.CameraCapture
 import io.github.thibaultbee.streampack.listeners.OnErrorListener
 import io.github.thibaultbee.streampack.streamers.helpers.CameraStreamerConfigurationHelper
 import io.github.thibaultbee.streampack.streamers.interfaces.ICameraStreamer
+import io.github.thibaultbee.streampack.streamers.interfaces.IStreamerEncoderCallback
 import io.github.thibaultbee.streampack.streamers.settings.BaseCameraStreamerSettings
 import io.github.thibaultbee.streampack.utils.getCameraList
 import io.github.thibaultbee.streampack.views.AutoFitSurfaceView
@@ -46,12 +47,14 @@ import kotlinx.coroutines.runBlocking
  */
 open class BaseCameraStreamer(
     private val context: Context,
+    encoderCallback: IStreamerEncoderCallback?,
     enableAudio: Boolean = true,
     muxer: IMuxer,
     endpoint: IEndpoint,
     initialOnErrorListener: OnErrorListener? = null
 ) : BaseStreamer(
     context = context,
+    encoderCallback = encoderCallback,
     videoCapture = CameraCapture(context),
     audioCapture = if (enableAudio) AudioCapture() else null,
     manageVideoOrientation = true,
