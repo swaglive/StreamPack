@@ -24,10 +24,12 @@ import io.github.thibaultbee.streampack.internal.muxers.ts.TSMuxer
 import io.github.thibaultbee.streampack.internal.muxers.ts.data.TsServiceInfo
 import io.github.thibaultbee.streampack.internal.utils.Scheduler
 import io.github.thibaultbee.streampack.internal.utils.defaultTsServiceInfo
+import io.github.thibaultbee.streampack.listeners.OnBitrateListener
 import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 import io.github.thibaultbee.streampack.listeners.OnErrorListener
 import io.github.thibaultbee.streampack.regulator.IBitrateRegulatorFactory
 import io.github.thibaultbee.streampack.streamers.bases.BaseCameraStreamer
+import io.github.thibaultbee.streampack.streamers.interfaces.IStreamerEncoderCallback
 import io.github.thibaultbee.streampack.streamers.live.BaseCameraLiveStreamer
 
 /**
@@ -44,6 +46,7 @@ import io.github.thibaultbee.streampack.streamers.live.BaseCameraLiveStreamer
  */
 class CameraSrtLiveStreamer(
     context: Context,
+    encoderCallback: IStreamerEncoderCallback? = null,
     enableAudio: Boolean = true,
     tsServiceInfo: TsServiceInfo = context.defaultTsServiceInfo,
     bitrateRegulatorFactory: IBitrateRegulatorFactory? = null,
@@ -52,6 +55,7 @@ class CameraSrtLiveStreamer(
     initialOnConnectionListener: OnConnectionListener? = null
 ) : BaseCameraLiveStreamer(
     context = context,
+    encoderCallback = encoderCallback,
     enableAudio = enableAudio,
     muxer = TSMuxer().apply { addService(tsServiceInfo) },
     endpoint = SrtProducer(),
@@ -74,10 +78,14 @@ class CameraSrtLiveStreamer(
     /**
      * Scheduler for bitrate regulation
      */
-    private val scheduler = Scheduler(500) {
+    private val scheduler = Scheduler(1000) {
+        val bitrate: Long = (srtProducer.stats.mbpsSendRate * 1_000_000).toLong()
+        onBitrateListener?.onBitrate(bitrate)
         bitrateRegulator?.update(srtProducer.stats, settings.video.bitrate, settings.audio.bitrate)
             ?: throw UnsupportedOperationException("Scheduler runs but no bitrate regulator set")
     }
+
+    var onBitrateListener: OnBitrateListener? = null
 
     private val srtProducer = endpoint as SrtProducer
 

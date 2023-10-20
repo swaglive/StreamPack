@@ -17,6 +17,7 @@ package io.github.thibaultbee.streampack.internal.sources.camera
 
 import android.Manifest
 import android.content.Context
+import android.hardware.camera2.CameraMetadata
 import android.view.Surface
 import androidx.annotation.RequiresPermission
 import io.github.thibaultbee.streampack.data.VideoConfig
@@ -31,8 +32,12 @@ class CameraCapture(
     private val context: Context,
 ) : IVideoCapture {
     var previewSurface: Surface? = null
+
+    var useCustomEncoderSurface: Boolean = false
     override var encoderSurface: Surface? = null
-    var cameraId: String = "0"
+
+    // 修改為預設前鏡頭
+    var cameraId: String = "${CameraMetadata.LENS_FACING_FRONT}"
         get() = cameraController.cameraId ?: field
         @RequiresPermission(Manifest.permission.CAMERA)
         set(value) {
@@ -88,13 +93,15 @@ class CameraCapture(
     }
 
     private fun checkStream() =
-        require(encoderSurface != null) { "encoder surface must not be null" }
+        require(useCustomEncoderSurface || encoderSurface != null) { "encoder surface must not be null" }
 
     override fun startStream() {
         checkStream()
 
         cameraController.muteVibrationAndSound()
-        cameraController.addTarget(encoderSurface!!)
+        encoderSurface?.let {
+            cameraController.addTarget(it)
+        }
         isStreaming = true
     }
 
@@ -105,7 +112,10 @@ class CameraCapture(
             cameraController.unmuteVibrationAndSound()
 
             isStreaming = false
-            cameraController.removeTarget(encoderSurface!!)
+
+            encoderSurface?.let {
+                cameraController.removeTarget(it)
+            }
         }
     }
 

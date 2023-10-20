@@ -34,10 +34,13 @@ import io.github.thibaultbee.streampack.internal.muxers.IMuxerListener
 import io.github.thibaultbee.streampack.internal.sources.IAudioCapture
 import io.github.thibaultbee.streampack.internal.sources.IVideoCapture
 import io.github.thibaultbee.streampack.listeners.OnErrorListener
+import io.github.thibaultbee.streampack.listeners.OnFpsListener
 import io.github.thibaultbee.streampack.logger.Logger
+import io.github.thibaultbee.streampack.streamers.fps.FpsCalculator
 import io.github.thibaultbee.streampack.streamers.helpers.IConfigurationHelper
 import io.github.thibaultbee.streampack.streamers.helpers.StreamerConfigurationHelper
 import io.github.thibaultbee.streampack.streamers.interfaces.IStreamer
+import io.github.thibaultbee.streampack.streamers.interfaces.IStreamerEncoderCallback
 import io.github.thibaultbee.streampack.streamers.settings.BaseStreamerSettings
 import io.github.thibaultbee.streampack.utils.TAG
 import java.nio.ByteBuffer
@@ -56,6 +59,8 @@ import java.nio.ByteBuffer
  */
 abstract class BaseStreamer(
     private val context: Context,
+    // 讓開發者可以建立自己的VideoEncoder
+    encoderCallback: IStreamerEncoderCallback? = null,
     protected val audioCapture: IAudioCapture?,
     protected val videoCapture: IVideoCapture?,
     manageVideoOrientation: Boolean,
@@ -126,9 +131,18 @@ abstract class BaseStreamer(
         }
     }
 
+    protected val fpsCalculator = FpsCalculator()
+
+    var onFpsListener: OnFpsListener? = null
+        set(value) {
+            fpsCalculator.listener = value
+            field = value
+        }
+
     private val muxListener = object : IMuxerListener {
         override fun onOutputFrame(packet: Packet) {
             try {
+                fpsCalculator.increment()
                 endpoint.write(packet)
             } catch (e: Exception) {
                 // Send exception to encoder
@@ -153,12 +167,22 @@ abstract class BaseStreamer(
     }
 
     protected var audioEncoder = if (audioCapture != null) {
-        AudioMediaCodecEncoder(audioEncoderListener, onInternalErrorListener)
+        encoderCallback?.onAudioEncoderCreate(audioEncoderListener, onInternalErrorListener)
+            ?: AudioMediaCodecEncoder(
+                audioEncoderListener,
+                onInternalErrorListener
+            )
     } else {
         null
     }
     protected var videoEncoder = if (videoCapture != null) {
-        VideoMediaCodecEncoder(
+        encoderCallback?.onVideoEncoderCreate(
+            videoEncoderListener,
+            onInternalErrorListener,
+            context,
+            videoCapture.hasSurface,
+            manageVideoOrientation
+        ) ?: VideoMediaCodecEncoder(
             videoEncoderListener,
             onInternalErrorListener,
             context,
