@@ -22,6 +22,7 @@ import io.github.thibaultbee.streampack.listeners.OnConnectionListener
 import io.github.thibaultbee.streampack.listeners.OnErrorListener
 import io.github.thibaultbee.streampack.streamers.bases.BaseCameraStreamer
 import io.github.thibaultbee.streampack.streamers.interfaces.ILiveStreamer
+import io.github.thibaultbee.streampack.streamers.interfaces.IStreamerEncoderCallback
 
 /**
  * A [BaseCameraStreamer] that sends microphone and camera frames to a remote device.
@@ -35,6 +36,7 @@ import io.github.thibaultbee.streampack.streamers.interfaces.ILiveStreamer
  */
 open class BaseCameraLiveStreamer(
     context: Context,
+    encoderCallback: IStreamerEncoderCallback? = null,
     enableAudio: Boolean = true,
     muxer: IMuxer,
     endpoint: ILiveEndpoint,
@@ -42,6 +44,7 @@ open class BaseCameraLiveStreamer(
     initialOnConnectionListener: OnConnectionListener? = null
 ) : BaseCameraStreamer(
     context = context,
+    encoderCallback = encoderCallback,
     enableAudio = enableAudio,
     muxer = muxer,
     endpoint = endpoint,
