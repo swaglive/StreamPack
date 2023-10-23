@@ -116,12 +116,13 @@ abstract class BaseStreamer(
         override fun onOutputFrame(frame: Frame) {
             videoTsStreamId?.let {
                 try {
-                    frame.pts += videoCapture!!.timestampOffset
-                    frame.dts = if (frame.dts != null) {
-                        frame.dts!! + videoCapture.timestampOffset
-                    } else {
-                        null
-                    }
+//                    frame.pts += videoCapture!!.timestampOffset
+//                    frame.dts = if (frame.dts != null) {
+//                        frame.dts!! + videoCapture.timestampOffset
+//                    } else {
+//                        null
+//                    }
+                    fpsCalculator.increment()
                     this@BaseStreamer.muxer.encode(frame, it)
                 } catch (e: Exception) {
                     // Send exception to encoder
@@ -142,7 +143,6 @@ abstract class BaseStreamer(
     private val muxListener = object : IMuxerListener {
         override fun onOutputFrame(packet: Packet) {
             try {
-                fpsCalculator.increment()
                 endpoint.write(packet)
             } catch (e: Exception) {
                 // Send exception to encoder
@@ -320,6 +320,8 @@ abstract class BaseStreamer(
 
             videoCapture?.startStream()
             videoEncoder?.startStream()
+
+            fpsCalculator.start()
         } catch (e: Exception) {
             stopStream()
             throw StreamPackError(e)
@@ -335,6 +337,8 @@ abstract class BaseStreamer(
      * @see [startStream]
      */
     override fun stopStream() {
+        fpsCalculator.stop()
+
         stopStreamImpl()
 
         // Encoder does not return to CONFIGURED state... so we have to reset everything...
@@ -394,6 +398,8 @@ abstract class BaseStreamer(
      * @see [configure]
      */
     override fun release() {
+        fpsCalculator.stop()
+
         audioEncoder?.release()
         videoEncoder?.codecSurface?.dispose()
         videoEncoder?.release()
