@@ -122,8 +122,8 @@ abstract class BaseStreamer(
 //                    } else {
 //                        null
 //                    }
-                    fpsCalculator.increment()
                     this@BaseStreamer.muxer.encode(frame, it)
+                    fpsCalculator.increment()
                 } catch (e: Exception) {
                     // Send exception to encoder
                     throw StreamPackError(e)
