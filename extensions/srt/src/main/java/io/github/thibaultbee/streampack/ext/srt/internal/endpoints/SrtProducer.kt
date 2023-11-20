@@ -64,6 +64,13 @@ class SrtProducer(
         get() = socket.getSockFlag(SockOpt.PASSPHRASE) as String
         set(value) = socket.setSockFlag(SockOpt.PASSPHRASE, value)
 
+    var latency: Int
+        get() = socket.getSockFlag(SockOpt.PEERLATENCY) as Int
+        set(value) = socket.setSockFlag(SockOpt.PEERLATENCY, value)
+
+    var maxBandwidth: Long = 0L
+        get() = socket.getSockFlag(SockOpt.MAXBW) as Long
+
     /**
      * Get SRT stats
      */
@@ -85,6 +92,8 @@ class SrtProducer(
             }
             uri.getQueryParameter("streamid")?.let { streamId = it }
             uri.getQueryParameter("passphrase")?.let { passPhrase = it }
+            uri.getQueryParameter("latency")?.let { latency = it.toInt() }
+            uri.getQueryParameter("maxbw")?.let { maxBandwidth = it.toLong() }
             uri.host?.let { connect(it, uri.port) }
                 ?: throw InvalidParameterException("Failed to parse URL $url: unknown host")
         }
@@ -165,7 +174,7 @@ class SrtProducer(
             throw ConnectException("SrtEndpoint should be connected at this point")
         }
 
-        socket.setSockFlag(SockOpt.MAXBW, 0L)
+        socket.setSockFlag(SockOpt.MAXBW, maxBandwidth)
         socket.setSockFlag(SockOpt.INPUTBW, bitrate)
     }
 
