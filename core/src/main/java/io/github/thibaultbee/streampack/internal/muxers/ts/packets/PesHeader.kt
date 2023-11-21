@@ -72,9 +72,8 @@ class PesHeader(
         buffer.putShort(0) // start code is 0x000001
         buffer.put(1)
         buffer.put(streamId)
-        if (pesPacketLength > 0xFFFF)
-            pesPacketLength = 0
-        buffer.putShort(pesPacketLength)
+        // PES packet length, use 0 to let decoder calculate payload length by unit_start
+        buffer.putShort(0)
         // Optional
         buffer.put(
             ((0b10 shl 6)
