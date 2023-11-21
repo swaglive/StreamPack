@@ -87,11 +87,6 @@ open class TS(
                 adaptationFieldIndicator = false
             }
 
-            // Then specific stream header. Mainly for PES header.
-            specificHeader?.let {
-                buffer.put(it)
-            }
-
             // Fill packet with correct size of payload
             payload?.let {
                 if (stuffingForLastPacket) {
@@ -101,6 +96,7 @@ open class TS(
                         val currentPacketFirstPosition =
                             buffer.position() / PACKET_SIZE * PACKET_SIZE
                         byte = buffer[currentPacketFirstPosition + 3].toInt()
+                        // Update adaptation field indicator to enable
                         byte = byte or (1 shl 5)
                         buffer.position(currentPacketFirstPosition + 3)
                         buffer.put(byte.toByte())
@@ -114,6 +110,11 @@ open class TS(
                             }
                         }
                     }
+                }
+
+                // Then specific stream header. Mainly for PES header.
+                specificHeader?.let { header ->
+                    buffer.put(header)
                 }
 
                 it.limit(it.position() + buffer.remaining().coerceAtMost(it.remaining()))
