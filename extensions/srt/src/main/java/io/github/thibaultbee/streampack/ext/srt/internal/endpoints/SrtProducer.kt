@@ -42,7 +42,6 @@ class SrtProducer(
     override var onConnectionListener: OnConnectionListener? = null
 
     private var socket = Socket()
-    private var bitrate = 0L
     private var isOnError = false
 
     companion object {
@@ -68,8 +67,17 @@ class SrtProducer(
         get() = socket.getSockFlag(SockOpt.PEERLATENCY) as Int
         set(value) = socket.setSockFlag(SockOpt.PEERLATENCY, value)
 
-    var maxBandwidth: Long = 0L
+    private var maxBandwidth: Long
         get() = socket.getSockFlag(SockOpt.MAXBW) as Long
+        set(value) = socket.setSockFlag(SockOpt.MAXBW, value)
+
+    private var overheadBandwidth: Long
+        get() = socket.getSockFlag(SockOpt.OHEADBW) as Long
+        set(value) = socket.setSockFlag(SockOpt.OHEADBW, value)
+
+    private var inputBandwidth: Long
+        get() = socket.getSockFlag(SockOpt.INPUTBW) as Long
+        set(value) = socket.setSockFlag(SockOpt.INPUTBW, value)
 
     /**
      * Get SRT stats
@@ -81,7 +89,6 @@ class SrtProducer(
         get() = socket.isConnected
 
     override fun configure(config: Int) {
-        this.bitrate = config.toLong()
     }
 
     override suspend fun connect(url: String) {
@@ -93,7 +100,9 @@ class SrtProducer(
             uri.getQueryParameter("streamid")?.let { streamId = it }
             uri.getQueryParameter("passphrase")?.let { passPhrase = it }
             uri.getQueryParameter("latency")?.let { latency = it.toInt() }
+            uri.getQueryParameter("oheadbw")?.let { overheadBandwidth = it.toLong() }
             uri.getQueryParameter("maxbw")?.let { maxBandwidth = it.toLong() }
+            uri.getQueryParameter("inputbw")?.let { inputBandwidth = it.toLong() }
             uri.host?.let { connect(it, uri.port) }
                 ?: throw InvalidParameterException("Failed to parse URL $url: unknown host")
         }
@@ -173,9 +182,6 @@ class SrtProducer(
         if (!socket.isConnected) {
             throw ConnectException("SrtEndpoint should be connected at this point")
         }
-
-        socket.setSockFlag(SockOpt.MAXBW, maxBandwidth)
-        socket.setSockFlag(SockOpt.INPUTBW, bitrate)
     }
 
     override fun stopStream() {
