@@ -2,6 +2,9 @@ apply from: "${project.rootDir}/StreamPack/common_library.gradle"
 // apply from: "${project.rootDir}/publish.gradle"
 
 android {
+    if (project.android.hasProperty('namespace')) {
+        namespace 'io.github.thibaultbee.streampack'
+    }
     buildTypes {
         release {
             minifyEnabled false
