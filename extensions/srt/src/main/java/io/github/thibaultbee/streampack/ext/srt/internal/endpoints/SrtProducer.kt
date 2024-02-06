@@ -103,8 +103,12 @@ class SrtProducer(
             uri.getQueryParameter("oheadbw")?.let { overheadBandwidth = it.toLong() }
             uri.getQueryParameter("maxbw")?.let { maxBandwidth = it.toLong() }
             uri.getQueryParameter("inputbw")?.let { inputBandwidth = it.toLong() }
-            uri.host?.let { connect(it, uri.port) }
-                ?: throw InvalidParameterException("Failed to parse URL $url: unknown host")
+            uri.host.let {
+                if (it == null) {
+                    throw InvalidParameterException("Failed to parse URL $url: unknown host")
+                }
+                connect(it, uri.port)
+            }
         }
     }
 
