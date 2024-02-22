@@ -71,8 +71,8 @@ class SrtProducer(
         get() = socket.getSockFlag(SockOpt.MAXBW) as Long
         set(value) = socket.setSockFlag(SockOpt.MAXBW, value)
 
-    private var overheadBandwidth: Long
-        get() = socket.getSockFlag(SockOpt.OHEADBW) as Long
+    private var overheadBandwidth: Int
+        get() = socket.getSockFlag(SockOpt.OHEADBW) as Int
         set(value) = socket.setSockFlag(SockOpt.OHEADBW, value)
 
     private var inputBandwidth: Long
@@ -100,7 +100,7 @@ class SrtProducer(
             uri.getQueryParameter("streamid")?.let { streamId = it }
             uri.getQueryParameter("passphrase")?.let { passPhrase = it }
             uri.getQueryParameter("latency")?.let { latency = it.toInt() }
-            uri.getQueryParameter("oheadbw")?.let { overheadBandwidth = it.toLong() }
+            uri.getQueryParameter("oheadbw")?.let { overheadBandwidth = it.toInt() }
             uri.getQueryParameter("maxbw")?.let { maxBandwidth = it.toLong() }
             uri.getQueryParameter("inputbw")?.let { inputBandwidth = it.toLong() }
             uri.host.let {
